@@ -1,0 +1,161 @@
+# Global Program Checklist: Battle Mode Edition: The Movie
+
+I need a convenient way to keep track of what I have and have not accomplished in my TecTac source, so that's what this is. This attempts to describe the global structure of the program in general, as well as reminding me of my
+progress in each area.
+
+## Testing the Flavors
+
+Juice me up, fam. This is how we know how we know what we know, ya dig?
+
+Yo, let me hit you with dat famous Ten Facts of Ass:
+
+- Juicy
+- Plump
+- Jiggles
+- Two Holes
+- Slap 'Em
+- Fingerbang
+- Mmf >.<
+- Bubbles
+- Sprung
+- Hotdog
+
+
+Goal for today:
+
+Have Command Menu aggregate command data into memory for display.         (This is where I am. EquipmentDatabaseManager needs to implement load())
+Finish Command Menu UI.
+
+
+During the pickUnit phase, draw an info window when hovering over a unit.
+
+
+------
+
+- [ ] Battle Modules
+      - [ ] Damage Formulas
+            - [ ] Easily callable/useable.
+            - [ ] All functions are.. functional; take arguments, return number.
+            - [ ] Add datatype "DamageNumber" with flags; "Restorative", status effects that passed check.
+
+      - [ ] Actions
+
+            - [x] EquipID class finished, useful as a name for equipment items.
+            - [ ] Finish consolidating ActionData and PassiveData into EquipData.
+            - [ ] Update program to 100% rely on EquipData/ID/Database only.
+            - [ ] All data accessed via giving the Database an ID and requesting the specific field.
+
+      - [ ] AreaEffectMap Datatype
+            - [ ] Datatype accurately describes affected and inaffected tiles and is easy to use.
+                  - [ ] Use GridMap singleton and source-point to check if units are affected.
+            - [ ] Include 2 or 3 (+?) degrees of strength
+                  [[Can be used for diminishing damage as distance from center increases, for instance.]]
+                  - [ ] Use ints/shorts/etc for degree. Positive  = infinite degrees, negative are "codes."
+                  - [ ] Alt. Use Byte and bit-digit significance for, say, 3 digits of degree (0-7) and 5 flags.
+            - [ ] Generator functions for simple shapes.
+                  - [ ] Circle (TaxiCab Distance)
+
+                  - [ ] Circle (Approximate Pixel-Distance)
+                        [[Don't plan on using this one, actually.]]
+
+                  - [ ] Square
+
+                  - [ ] Line
+
+                        **The simple shapes are the only, strictly useful ones.**
+
+                  - [ ] Cross
+
+                  - [ ] Diagonal Cross
+
+                  - [ ] All of the above: take an argument source-point that removes the castor's tile.
+
+      - [ ] BattleParty
+            - [ ] First, figure out what purpose this class really has.
+            - [ ] Maintain Team-Relevant Information:
+                  - [ ] Team "Name": string or value, ally/enemy/other.
+                  - [ ] Team Defeated/Operating Status
+                  - [ ] References to Unit class of all members. (Non-binding)
+                        [[EntitiesList maintains global unit memory-management responsibility.]]
+                  - [ ] Important Team-only info (if any); Team Spawn Points, for instance.
+                  - [ ] Enforces maximum member limit (if needed).
+                        [[Advance Wars limited each army to 50 units.]]
+
+      - [ ] EntitiesList
+
+            - [ ] Primary container for all units (among other things) on the field.
+            - [ ] Can determine, when asked, which team a unit belongs to.
+               [[Value held in Unit? Or in BattleParty? The unit probably should know where it belongs.]]
+
+      - [ ] Unit
+
+         - [ ] Implemented unit attributes: maxHP, maxAP, knowledge stats, etc.
+            - [ ] Implemented unit experience: XPstat, mXPstat, etc.
+         - [ ] Implemented unit condition: curHP, curAP, etc.
+         - [ ] Implemented unit equipment: Slot1, Slot2, Accessory, etc.
+            - [ ] Builds command list when prompted.
+            - [ ] Alt. Implement unit abilities, which builds command list when equipment changes.
+         - [ ] Maintain engine-related information.
+            [[E.g. Coordinate position, inter-coordinate position (for animation), etc.]]
+         - [ ] Knowledge Stats have a value and a type; packet this together into one simple datatype.
+
+      - [ ] Grid
+
+            - [ ] (Optional) Rename to "BattleGrid"?
+                  [[It's only useful in battle; the world map will need a different one, probably.]]
+            - [ ] Uses EntitiesList to build accurate picture when prompted.
+                  - [ ] Self-Prompt, if efficient, to solve "forgot to update map" problems.
+            - [ ] Implement terrain-types, including movement costs and defense ratings for each.
+            - [ ] (Optional) Create a RangeMap class that builds and holds simple true/false maps.
+                  - [ ] A Grid-sized map is used instead of Cells to remember enemy danger ranges.
+                        - [ ] Or a list of danger ranges + positions are kept.
+                              [[Would this make drawing slower? I see a lot of repetitive checking.]]
+                  - [ ] A  smaller map is used to remember movement and attack ranges.
+                  - [ ] Build function takes in multiple arguments:
+                        - [ ] Range and NullRange
+                        - [ ] Traveler boolean-flag
+                        - [ ] ExlusionType (Allies, Enemies, All, etc.)
+                        - [ ] InclusionType (Allies, Enemies, All, etc.)
+                              [[A whitelist, essentially. Exclude:All + Include:Enemy creates attack ranges.]]
+                              [[Is this a silly construction? Movement and attack are pretty standard, maybe they should have their own functions.]]
+                        - [ ] PassThroughType (Allies, Enemies, All, etc.) for Traveler=True
+                              [[This seems like so much. I suppose it was always needed.]]
+                              [[Used when units are excluded but still traversible.]]
+                  - [ ] MapDraw adds 1, 2, 3 or 4 to an int for each map (movement, aid, attack, danger) that includes a tile in its makeup, then colors the tile accordingly.
+                        [[*Purple!* That's movement + danger.]]
+
+      - [ ] Battle UI
+
+         - [ ] Command Menu
+            - [ ] Appears and responds to input appropriately.
+            - [ ] Is functional: takes an argument (abilities list) and returns a value (player selection).
+         - [ ] Info Window
+               - [ ] Displays Terrain and/or Unit information.
+               - [ ] Terrain and Unit info is easily switchable with a button.
+         - [ ] Unit Status Window
+               - [ ] Opens when a unit is selected. Enemies only.
+                     [[Or, a special button is devoted to it, specifically.]]
+               - [ ] Displays more in depth information, including stats, abilities , weaknesses, etc.
+               - [ ] May only open if an enemy has been scanned. Thus called the **Scan Window**.
+         - [ ] Unit Glance Status
+               - [ ] Units have a health bar beneath them on the field.
+               - [ ] Units look or act differently when ailed.
+                     [[Poison should appear as purple bubbles, etc.]]
+         - [ ] Field Cursor
+               - [ ] Moves and selects, as it is intended to, and not as it isn't.
+               - [ ] Doesn't select units at random. Ever.
+         - [ ] Start Menu
+               - [ ] Opens when you paus.
+               - [ ] Contains all your favorite options, like Settings, Objectives and boring Dossier stuff.
+                     [[*I love to turn the music off and then off again!*]]
+               - [ ] Also has End the turn.
+
+
+
+
+
+100Q
+
+100g
+
+100G

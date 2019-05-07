@@ -1,0 +1,42 @@
+/*
+ * If TurnMachine shouldn't have functions for inserting ... well, it'll have to.
+ * But maybe they should be confined to being used by its "arms" (these state classes).
+ * Anyway, if that's the case, I could pass a reference to self to cmdMenu to collect the player's
+ * input (or FieldCursor, or PauseMenu, etc.). next() could pass it along to TurnMachine.
+ * 
+ * TODO Pass reference to self to cmdMenu to collect player input?
+ */
+
+package statemachines.turnstates;
+
+import battle.ui.CommandMenu;
+import statemachines.TurnMachine;
+
+public class PickCommand extends TurnState {
+
+  private final TurnMachine tm = TurnMachine.instance();
+  private final CommandMenu cmdMenu = CommandMenu.instance();
+  
+  @Override
+  public TurnState getNextState() { return new PickTarget(); }
+
+  @Override
+  public TurnState getPrevState() { return new PickMoveTile(); }
+
+  @Override
+  public void init() {
+    cmdMenu.setCommands(tm.getActingUnit().getEquipment().getCommands());
+    cmdMenu.wake();
+  }
+
+  @Override
+  public void update() {
+    // TODO Watch for (tm.command != null)
+  }
+  
+  @Override
+  public void close() {
+    cmdMenu.sleep();
+  }
+
+}

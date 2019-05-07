@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;battle.entities.unit.UnitInfo&apos; to &apos;UnitData&apos;&#x0D;&#x0A;- Original project: &apos;TecTac&apos;&#x0D;&#x0A;- Original element: &apos;battle.entities.unit.UnitInfo&apos;&#x0D;&#x0A;- Renamed element: &apos;battle.entities.unit.UnitData&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;UnitInfo&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;battle.entities.unit{UnitInfo.java[UnitInfo" matchStrategy="1" name="UnitData" qualified="false" references="true" similarDeclarations="false" stamp="1527293381665" textual="false" version="1.0"/>
+</session>

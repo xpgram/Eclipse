@@ -1,0 +1,67 @@
+
+I have added most every major feature I wanted to.
+Aside of quality-of-life improvements, there's not much more to do.
+
+That is, besides the AoE system.
+
+Certain attacks use a special map to determine where they hit, and this map can be (is usually) a standard line or "circle" shape.
+However, it can be unique.
+
+For instance, the shotgun:
+      B2
+A  B1 B2
+      B2
+      
+I want a grid editor to handle the drawing a configuring of this.
+I'll need to add new fields to EquipData, and probably update how it returns DataFields from columns to accomodate the unique
+UI style I have in mind for this.
+
+But first, a rundown of how AoE's will be written.
+
+The decision on the part of the player has 3 different styles:
+ - PickPoint    : Given a range of chooseable tiles, pick one to be the center of the attack.
+ - PickDir      : Given some special AoE map, pick a direction to aim it in.
+ - Confirm      : Simply confirm that this range, centered on the user, is placed correctly.
+                    This is very much the same as PickPoint with a range of 0, minus the use of the field cursor.
+
+There are two parts to each "Range:" the selectable range from which the center of the attack can be determined by the player,
+and the BlastRangeMap which describes where and how each tile, surrounding the attack's center, is actually affected by said attack.
+PickPoint is the only one to actually use the former half.
+
+Additionally, AoE blast maps can be auto-configured instead of drawn. There are a few types:
+ - Circle       : Given a range and a nullRange, describe a ring surrounding the user.
+ - Line         : Given a range and a nullRange, describe a line segment extended from the user.
+ - Draw         : Labeled "Special", my tool does not auto-draw the blast map but instead uses one drawn by the user.
+ 
+The ring aspect of the circle type is important because these effects could be centered on the user themselves.
+I just realized I'm using "user" to mean two different things. I was talking about the attack-castor in this case.
+
+The editor relies on Range and nRange, also listed in CoreStats, to define the PickPoint range.
+If this range is 0, it is assumed to be Confirm style.
+If it features an L, it is assumed to be PickDir style.
+The L also dictates a line style blast map, but this can be overwritten with the Special flag.
+An L label auto-assumes gun-style lines, and draws one according to the range on the Blast Map.
+Line ranges do not actually have a PickPoint range; just like PickDir, it is actually, effectively 0.
+For some special cases I haven't even concieved yet, maybe adding another flag for "Force PickPoint" would be useful.
+
+The way the editor in the tool actually works:
+  It takes up the entire view space (IDs and Names are still visible, as always)
+  It is a grid with some settings at the top
+  The grid is selectable and editable
+  Which weapon is being edited is changeable by moving over to the name or ID column, moving up/down to the desired equip,
+    and then moving back onto the grid. Scrolling down the name and ID columns also scrolls through the different range maps.
+    You are only editing one once you move the cursor into it.
+  For visual reasons, I may want to split the screen realestate into two grids, one for PickPoint ranges, and the other for the Blast Map.
+    That way you could properly visualize both.
+  Any tile in the grid that has been "filled" will change color to indicate so.
+  For certain styles, PickDir in particular, a yellow tile indicates the castor.
+  
+  
+  
+  
+ALSO ALSO ALSO
+If I want to add blast range to the Core tab, which I might because it's a common setting that doesn't necessarily need to invoke the map editor,
+I can condense the Core view a little by shortening Std_Chunk; I don't actually need all that space for those numbers, they're too small.
+The text on the header, I dunno. We'll see.
+It's very obvious to me that if I were to do this, I want to create a new chunk size for small stats and apply those to the stats columns;
+changing Std_Chunk to a smaller width messes up too many other things.
